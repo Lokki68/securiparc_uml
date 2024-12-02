@@ -1,0 +1,500 @@
+@startuml entities
+
+' ok
+entity User {
+  id : bigint
+  ---
+  // modele devise \\
+  * last_name : string
+  * first_name : string
+  * email : email
+  * role_id : bigint <<FK>>
+  * userable_id : bigint <<FK>>
+  * userable_type : string <<FK>>
+  state : string (disabled, enabled)
+  // modele devise \\
+}
+
+' ok
+entity Role {
+  id : bigint
+  ---
+  * name : string
+}
+
+' ok
+entity Broker {
+  id : bigint
+  ---
+  * company : string
+  company_identity_file : file
+  street : string
+  zip_code: string
+  city: string
+  country_id : bigint <<FK>>
+  phone : phone
+  mobile : phone
+  * email : email
+  individual : boolean : false
+  state : string (disabled, enabled)
+}
+
+' ok
+entity Promoter {
+  id : bigint
+  ---
+  * company : string
+  street : string
+  zip_code: string
+  city: string
+  country_id : bigint <<FK>>
+  phone : phone
+  mobile : phone
+  state : string (disabled, enabled)
+}
+
+' ok
+entity Notary {
+  id : bigint
+  ---
+  * company : string
+  street : string
+  zip_code: string
+  city: string
+  country_id : bigint <<FK>>
+  phone : phone
+  mobile : phone
+  state : string (disabled, enabled)
+}
+
+' ok
+entity GroupPromoter {
+  id : bigint
+  ---
+  * company : string
+  * street : string
+  * zip_code: string
+  * city: string
+  * country_id : bigint <<FK>>
+  * state : string (disabled, enabled)
+}
+
+' ok
+entity GroupPromoterPromoter {
+  id : bigint
+  ---
+  * promoter_id : bigint <<FK>>
+  * group_promoter_id: bigint <<FK>>
+  * capital_rate : float
+}
+
+' ok
+entity Country {
+  id : bigint
+  ---
+  * name : string
+  * code : string
+}
+
+' ok
+entity RealestateTransactionGroup {
+  id : bigint
+  ---
+  * broker_id : bigint <<FK>>
+  * typology : string
+  * sale_price : float
+  * average_market_sale : float
+  * commission: float
+  state: string (draft, complet, affected, analysis, signature, intent, broker, division, notary)
+}
+
+entity BuildablePrice {
+    id: bigint
+    ---
+    * price: float
+    default: boolean
+}
+
+entity LandscapePrice {
+    id: bigint
+    ---
+    * price: float
+    default: boolean
+}
+
+' ok
+entity RealestateTransaction {
+  id : bigint
+  ---
+  * realestate_transaction_group_id : bigint <<FK>>
+  * sku : string
+  * typology : string
+  * city : string
+  designation : string
+  * land_register_number : string
+  * surface : float
+  * buildability : float
+  * state_of_easements : text
+  * gross_rental_yield: float
+  * net_rental_yield: float
+  * net_net_rental_yield: float
+  price_square_meter_buildable: float
+  parking_place_price: float
+  buildability_surface: integer
+  architect_fees: float
+  interim_interest: float
+  pilot_fees: float
+  schedules: float
+  connection_fees: float
+  commercialisation_fees: float
+}
+
+' ok
+entity RentalStatus {
+  id: bigint
+  ---
+  * realestate_transaction_id : bigint <<FK>>
+  * building_name: string
+  * address: string
+  * sale_price: float
+  * projected_rental_status_price: float
+  * consolidated_rental_status_price: float
+}
+
+' ok
+entity NetRentalCharge {
+  id : bigint
+  ---
+  * rental_status_id: bigint <<FK>>
+  * label: string
+  * price: float
+}
+
+' ok
+entity GrossRentalCharge {
+  id : bigint
+  ---
+  * rental_status_id: bigint <<FK>>
+  * label: string
+  * price: float
+}
+
+' ok
+entity RentalStatusDetail {
+  id: bigint
+  ---
+  * rental_status_id: bigint <<FK>>
+  * city: string
+  * address: string
+  * ppe_batch_number: string
+  * batch_label: string
+  * batch_description: string
+  * surface: float
+  * annual_price_square_meters: float
+  * annual_rent: float
+  * monthly_rent: float
+  * status_of_leases: text
+  * tenant_name: string
+  * tenant_address: string
+  * tenant_phone: phone
+  * tenant_email: email
+  * entry_date: date
+  * release_date: date
+}
+
+' ok
+entity RealestateTransactionDocument {
+  id : bigint
+  ---
+  * realestate_transaction_document_type_id : bigint <<FK>>
+  * realestate_transaction_id: : bigint <<FK>>
+  file : file
+}
+
+' ok
+entity RealestateTransactionImage {
+  id : bigint
+  ---
+  * realestate_transaction_id: : bigint <<FK>>
+  * file : file
+}
+
+' ok
+entity RealestateTransactionDocumentType {
+  id : bigint
+  ---
+  * name : string
+}
+
+' ok
+entity DealGroupPromoter {
+  id : bigint
+  ---
+  * realestate_transaction_group_id: bigint <<FK>>
+  * group_promoter_id: bigint <<FK>>
+  * terms_of_deal: text
+  * answer_date : date
+  state: string (accepted, rejected)
+}
+
+' ok
+entity DealGroupPromoterAnswer {
+  id : bigint
+  ---
+  * deal_group_promoter_id: bigint <<FK>>
+  * group_promoter_id: bigint <<FK>>
+  * promoter_id: text
+  * answer_date : date
+  state : string (accepted, denied)
+}
+
+entity TransactionGroupHistoric {
+  id: bigint
+  ---
+  * realestate_transaction_group_id: bigint <<FK>>
+  start_at: date
+  end_at: date
+  validated: boolean
+  validated_at: date
+}
+
+entity TransactionAnalyse {
+  id: bigint
+  ---
+  * realestate_transaction_id: bigint <<FK>>
+  analyse_type: string
+  promoter_id: bigint
+
+  sale_price: float
+  ground_surface: float
+  price_square_meter: float
+  notary_fees: float
+  construction_ppe_fees: float
+  total_ground_price: float
+
+  building: float
+  building_price_per_square_meter: float
+  building_total_price: float
+  landscape: float
+  landscape_price_per_square_meter: float
+  landscape_total_price: float
+  contrat_eg: float
+  contrat_eg_price_per_square_meter: float
+  contrat_eg_total_price: float
+
+  architect_fees: float
+  interim_interest: float
+  pilot_fees: float
+  schedules: float
+  connection_fees: float
+  commercialisation_fees: float
+  total_fees: float
+
+  total_coast: float
+  
+  average_market_sale: float
+  parking_places: integer
+  total_sale: float
+  commission: float
+
+  recipe: float
+  margin: float
+}
+
+entity AnalyseResponse {
+  id: bigint
+  ---
+  * realestate_transaction_id: bigint <<FK>>
+  * transaction_analyse_id: bigint <<FK>>
+  * group_promoter_id: bigint <<FK>>
+
+  problem_identification: string
+  problem_solution: string
+
+  * price_proposition: float
+  state: string (raised, accepted)
+}
+
+entity AnalyseResponseAnswer {
+  id: bigint
+  ---
+  * analyse_response_id: bigint <<FK>>
+  * group_promoter_id: bigint <<FK>>
+  * promoter_id: bigint
+
+  against_price_proposition: float
+}
+
+entity IntentLetter {
+  id: bigint
+  ---
+  * realestate_transaction_group_id: bigint <<FK>>
+  * group_promoter_id: bigint <<FK>>
+
+  * suspensive_condition: string
+  * acquisition_condition: string
+  advance_requested: float
+  advance_type: string
+  proposed_price: float
+  broker_id: bigint
+  group_promoter_validation: boolean
+  state: string (accepted, denied)
+}
+
+entity IntentLetterAnswer {
+  id : bigint
+  ---
+  * intent_letter_id: bigint <<FK>>
+  * group_promoter_id: bigint <<FK>>
+  * promoter_id: bigint
+  * answer_date : date
+  state : string (accepted, denied)
+}
+
+entity IntentLetterReception {
+  id: bigint
+  ---
+  * intent_letter_id: bigint <<FK>>
+  * broker_id: bigint <<FK>>
+   answer_date: date
+   new_price: float
+   type_response: string
+  state: string (acccepted, denied)
+}
+
+entity Distribution {
+  id: bigint
+  ---
+  * realestate_transaction_group_id: bigint <<FK>>
+  * notary_id: bigint
+  * total_price: float
+  * answer_date: date
+
+}
+
+entity DistributionPromoter {
+  id: bigint
+  ---
+  * distribution_id: bigint <<FK>>
+  * promoter_id: bigint <<FK>>
+  advance_requested: float
+  advance_type: type
+  notary_advance:float
+}
+
+entity CapitalCall {
+  id: bigint
+  ---
+  * realestate_transaction_group_id: bigint <<FK>>
+  * total_price: float
+  * notary_id: bigint
+  * answer_date: date
+  state: string (waited, completed)
+}
+
+entity CapitalCallPromoter {
+  id: bigint
+  ---
+  * capital_call_id: bigint <<FK>>
+  * promoter_id: bigint <<FK>>
+  capital: float
+  created_at: date
+  state: string (in_progress, sending)
+}
+
+entity ActProject {
+  id: bigint
+  ---
+  * realestate_transaction_group_id: bigint
+  * realestate_transaction_id: bigint
+  * group_promoter_id: bigint
+  * broker_id: bigint
+  * notary_id: bigint
+  * document_id: bigint
+  * clause: string
+}
+
+entity ActProjectBroker {
+    id: bigint
+    ---
+    act_project_id: bigint
+    broker_id: bigint
+    description: text
+    state: string
+}
+
+entity ActProjectGroupPromoter {
+    id: bigint
+    ---
+    act_project_id: bigint
+    group_promoter_id: bigint
+    answer_date: date
+    description: text
+    state: string
+}
+
+entity Document {
+  id: bigint
+  ---
+  * model: string
+  * file: file
+}
+
+
+
+DealGroupPromoter ||- GroupPromoter
+DealGroupPromoterAnswer ||- DealGroupPromoter
+DealGroupPromoterAnswer ||- GroupPromoter
+DealGroupPromoterAnswer ||- Promoter
+DealGroupPromoter ||- RealestateTransactionGroup
+Promoter }|- GroupPromoterPromoter
+GroupPromoter }|- GroupPromoterPromoter
+GroupPromoterPromoter }|- GroupPromoter
+GroupPromoterPromoter }|- Promoter
+Promoter }o-- User
+Notary }o-- User
+Broker }o-- User
+Country ||-- Broker
+Country ||-- Promoter
+Country ||-- Notary
+Broker ||-- RealestateTransactionGroup
+RealestateTransaction ||-- RealestateTransactionDocument
+RealestateTransaction ||-- RentalStatus
+RentalStatus ||-- RentalStatusDetail
+RentalStatus ||-- NetRentalCharge
+RentalStatus ||-- GrossRentalCharge
+RealestateTransaction ||-- RealestateTransactionGroup
+RealestateTransaction ||-- RealestateTransactionImage
+RealestateTransactionDocumentType ||-- RealestateTransactionDocument
+User ||-- Role
+
+RealestateTransactionGroup -- TransactionGroupHistoric
+RealestateTransaction -- TransactionAnalyse
+RealestateTransaction -- AnalyseResponse
+AnalyseResponse -- AnalyseResponseAnswer
+TransactionAnalyse -- AnalyseResponse
+
+RealestateTransactionGroup -- IntentLetter
+GroupPromoter -- IntentLetter
+
+IntentLetter -- IntentLetterAnswer
+GroupPromoter -- IntentLetterAnswer
+IntentLetter -- IntentLetterReception
+Broker -- IntentLetterReception
+
+RealestateTransactionGroup -- Distribution
+Distribution -- DistributionPromoter
+DistributionPromoter -- Promoter
+
+RealestateTransaction -- BuildablePrice
+RealestateTransaction -- LandscapePrice
+
+RealestateTransactionGroup -- CapitalCall
+CapitalCall -- CapitalCallPromoter
+Promoter -- CapitalCallPromoter
+
+RealestateTransaction -- ActProject
+Document -- ActProject
+ActProject -- ActProjectBroker
+ActProject -- ActProjectGroupPromoter
+@enduml
